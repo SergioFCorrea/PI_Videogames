@@ -1,4 +1,4 @@
-const {getAll} = require('./controllers/controller')
+const {getAll, getGameDetail, getAllDetails} = require('./controllers/controller')
 
 const getGames = async (req, res) => {
     const games = await getAll()
@@ -9,4 +9,18 @@ const getGames = async (req, res) => {
     }
 }
 
-module.exports = getGames
+
+const getDetail = async (req, res) => {
+    const { id } = req.params
+    const gameDetail = await getAllDetails(id)
+    try {
+        res.status(200).send(gameDetail)
+    } catch (error) {
+        res.status(404).send(error.message)
+    }
+}
+
+module.exports = {
+    getGames,
+    getDetail
+}

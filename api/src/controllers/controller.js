@@ -2,7 +2,35 @@ const axios = require("axios");
 const { Videogames } = require("../db");
 const { API_KEY } = process.env;
 
-// const URL = `https://api.rawg.io/api/games?key=${API_KEY}`
+const getGameDetail = async (id) => {
+	// if (!isNaN(id)) {
+		const response = await axios(
+			`https://api.rawg.io/api/games/${id}?key=${API_KEY}`
+		);
+		const data = response.data;
+		return data;
+	// } else if (isNaN(id)) {
+
+	// }
+};
+
+
+
+
+// const dbGame = async(db) => await db.findByPk(id);
+
+
+
+const getAllDetails = async (id) => {
+	if(isNaN(id)){
+	const db = await Videogames.findByPk(id);
+	console.log(id);
+	return db
+}
+	const api = await getGameDetail(id)
+	return api
+}
+
 
 const getVideoGame = async () => {
 	const apiResponse = await axios(
@@ -13,12 +41,14 @@ const getVideoGame = async () => {
 	return apiData;
 };
 
-const getDbGames = async (db) => await db.findAll()
+
+
+const getDbGames = async (db) => await db.findAll();
 
 const getAll = async () => {
 	const db = await getDbGames(Videogames);
 	const api = await getVideoGame();
-  console.log(db);
+	// console.log(db);
 	return [...db, ...api];
 };
 
@@ -45,7 +75,9 @@ const postVideogame = async (
 };
 
 module.exports = {
+	getGameDetail,
 	getVideoGame,
 	postVideogame,
 	getAll,
+	getAllDetails
 };

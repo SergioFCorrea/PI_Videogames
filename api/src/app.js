@@ -7,9 +7,9 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const routes = require("./routes/index.js");
 const { postVideogame } = require("./controllers/controller.js");
-const getGames = require('./handlers.js')
+const { getGames, getDetail } = require("./handlers.js");
 const { API_KEY } = process.env;
-const {Videogames} = require('./db.js')
+const { Videogames } = require("./db.js");
 
 require("./db.js");
 
@@ -48,20 +48,6 @@ let pageIndex = 2;
 // GET ALL GAMES
 server.get("/videogames", getGames);
 
-// async (req, res) => {
-// 	try {
-// 		const response = await axios(
-// 			`https://api.rawg.io/api/games?key=${API_KEY}`
-// 		);
-// 		pageIndex = 1;
-// 		res.status(200).json(response.data);
-// 	} catch (error) {
-// 		res.status(500).send(error.message);
-// 	}
-// }
-
-
-
 // NEXT PAGE ROUTE
 server.get("/videogames/nextpage", async (req, res) => {
 	try {
@@ -94,20 +80,7 @@ server.get("/videogames/previouspage", async (req, res) => {
 });
 
 // DETAIL ROUTE
-server.get("/videogames/:id", async (req, res) => {
-	try {
-		const { id } = req.params;
-
-		const response = await axios(
-			`https://api.rawg.io/api/games/${id}?key=${API_KEY}`
-		);
-		const data = response.data;
-		console.log(id);
-		res.status(200).json(data);
-	} catch (error) {
-		res.status(404).send('non-existent id');
-	}
-});
+server.get("/videogames/:id", getDetail);
 
 // SEARCH BY NAME
 server.get(`/gamebyname`, async (req, res) => {
@@ -164,8 +137,8 @@ server.post("/videogames", async (req, res) => {
 			description,
 			background_image,
 			rating,
-			platforms,
-			genres
+			platforms.map((platform) => ({ platform:{name: platform} })),
+			genres.map((genre) => ({name: genre}))
 		);
 
 		res.status(200).json(newGame);
